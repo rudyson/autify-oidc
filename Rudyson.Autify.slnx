@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path=".runsettings" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/server/Rudyson.Autify.Application/Rudyson.Autify.Application.csproj" />
+  <Project Path="src/server/Rudyson.Autify.Domain/Rudyson.Autify.Domain.csproj" />
+  <Project Path="src/server/Rudyson.Autify.Infrastructure/Rudyson.Autify.Infrastructure.csproj" />
+  <Project Path="src/server/Rudyson.Autify.Server/Rudyson.Autify.Server.csproj" Id="314d7374-0fe7-4eee-8e5f-fcbffb761779" />
+</Solution>

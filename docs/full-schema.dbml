@@ -1,0 +1,147 @@
+Project xnauth {
+  database_type: 'PostgreSQL'
+  note: 'Mircoservice XN Identity Provider'
+}
+
+Enum user_status {
+  active
+  suspended
+  deleted
+}
+
+Enum user_provider {
+  local
+  google
+  microsoft
+  github
+  telegram
+}
+
+Table users {
+  id              uuid        [pk]
+  status          varchar(32) [not null]
+  created_at      timestamptz [not null]
+  updated_at      timestamptz
+}
+
+Table user_identities {
+  id                 uuid        [pk]
+  user_id            uuid        [not null, ref: > users.id]
+  provider           varchar(64) [not null]
+  provider_user_id   varchar(255) [not null]
+  created_at         timestamptz [not null]
+
+  indexes {
+    (provider, provider_user_id) [unique]
+  }
+}
+
+Table user_credentials {
+  user_id            uuid        [pk, ref: > users.id]
+  password_hash      text        [not null]
+  password_algorithm varchar(64) [not null]
+  last_changed_at    timestamptz [not null]
+}
+
+Table user_emails {
+  id          uuid        [pk]
+  user_id     uuid        [not null, ref: > users.id]
+  email       varchar(320) [not null]
+  is_primary  boolean     [not null, default: false]
+  is_verified boolean     [not null, default: false]
+  created_at  timestamptz [not null]
+
+  indexes {
+    email [unique]
+  }
+}
+
+Table email_verification_tokens {
+  id           uuid        [pk]
+  user_id      uuid        [not null, ref: > users.id]
+  email        varchar(320) [not null]
+  token_hash   text        [not null]
+  expires_at   timestamptz [not null]
+  created_at   timestamptz [not null]
+}
+
+Table password_reset_tokens {
+  id           uuid        [pk]
+  user_id      uuid        [not null, ref: > users.id]
+  token_hash   text        [not null]
+  expires_at   timestamptz [not null]
+  created_at   timestamptz [not null]
+  used_at      timestamptz
+}
+
+Table user_sessions {
+  id             uuid        [pk]
+  user_id        uuid        [not null, ref: > users.id]
+  user_agent     text
+  ip_address     inet
+  created_at     timestamptz [not null]
+  expires_at     timestamptz [not null]
+  revoked_at     timestamptz
+}
+
+Table refresh_tokens {
+  id             uuid        [pk]
+  session_id     uuid        [not null, ref: > user_sessions.id]
+  token_hash     text        [not null]
+  expires_at     timestamptz [not null]
+  created_at     timestamptz [not null]
+  rotated_at     timestamptz
+}
+
+Table user_profiles {
+  user_id       uuid        [pk, ref: > users.id]
+  display_name  varchar(128)
+  avatar_url    text
+  locale        varchar(16)
+  timezone      varchar(64)
+  updated_at    timestamptz
+}
+
+Table roles {
+  id          uuid        [pk]
+  name        varchar(64) [not null, unique]
+  description text
+  created_at  timestamptz [not null]
+}
+
+Table user_roles {
+  user_id uuid [not null, ref: > users.id]
+  role_id uuid [not null, ref: > roles.id]
+  granted_at timestamptz [not null]
+
+  indexes {
+    (user_id, role_id) [pk]
+  }
+}
+
+// users.read, users.write
+Table permissions {
+  id          uuid        [pk]
+  name        varchar(128) [not null, unique]
+  description text
+}
+
+Table role_permissions {
+  role_id       uuid [not null, ref: > roles.id]
+  permission_id uuid [not null, ref: > permissions.id]
+
+  indexes {
+    (role_id, permission_id) [pk]
+  }
+}
+
+// login, logout, token_revoked
+Table security_events {
+  id          uuid        [pk]
+  user_id     uuid        [ref: > users.id]
+  event_type  varchar(64) [not null]
+  ip_address  inet
+  user_agent  text
+  created_at  timestamptz [not null]
+}
+
