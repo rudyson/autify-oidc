@@ -4,9 +4,9 @@ namespace Rudyson.Autify.Domain.ValueObjects;
 
 public sealed class UserId : ValueObject
 {
-    public Guid Value { get; private set; }
+    public Guid Value { get; init; }
 
-    private UserId(Guid value)
+    public UserId(Guid value)
     {
         Value = value;
     }

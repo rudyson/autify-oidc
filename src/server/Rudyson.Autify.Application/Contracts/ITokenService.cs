@@ -6,5 +6,5 @@ namespace Rudyson.Autify.Application.Contracts;
 public interface ITokenService
 {
     string CreateAccessToken(User user);
-    (string raw, RefreshToken hash) CreateRefreshToken();
+    (string raw, RefreshTokenHash hash) CreateRefreshToken();
 }

@@ -1,8 +1,13 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Rudyson.Autify.Application.Contracts;
-using Rudyson.Autify.Infrastructure.Services;
+using Rudyson.Autify.Infrastructure;
+using Rudyson.Autify.Infrastructure.Options;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Rudyson.Autify.Server.Helpers;
+using Rudyson.Autify.Application.Contracts;
 
 namespace Rudyson.Autify.Server;
 
@@ -33,7 +38,48 @@ public class Startup(IConfiguration configuration, IHostEnvironment hostEnvironm
 
         services.AddHttpContextAccessor();
 
-        services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(
+                builder =>
+                {
+                    builder
+                        .WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+        });
+
+        var jwtSection = configuration.GetSection(JwtOptions.SectionName);
+        var jwtOptions = jwtSection.Get<JwtOptions>();
+        ArgumentNullException.ThrowIfNull(jwtOptions);
+
+        services
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.Secret)),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidAudience = jwtOptions.Audience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
+        services.AddScoped<ITenantProvider, TenantProvider>();
+        services.AddInfrastructure(configuration);
     }
 
     public void Configure(IApplicationBuilder app)

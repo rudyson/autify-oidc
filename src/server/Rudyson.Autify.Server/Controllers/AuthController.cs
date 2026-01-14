@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Rudyson.Autify.Application.Commands.Register;
 using Rudyson.Autify.Application.Contracts;
 
 namespace Rudyson.Autify.Server.Controllers;
@@ -7,21 +9,29 @@ namespace Rudyson.Autify.Server.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    [Obsolete]
-    [HttpPost(nameof(Test))]
-    public IActionResult Test(IPasswordHasher passwordHasher)
-    {
-        var password = "password123";
-        var hash = passwordHasher.Hash(password);
-        var isValid = passwordHasher.Verify(password, hash);
+    private readonly IMediator _mediator;
 
-        return isValid ? Ok() : BadRequest();
+    public AuthController(IMediator mediator)
+    {
+        _mediator = mediator;
     }
 
     [HttpPost(nameof(Register))]
-    public Task<IActionResult> Register(CancellationToken cancellationToken = default) // [FromBody] RegisterRequest request, IPasswordHasher passwordHasher
+    public async Task<IActionResult> Register(
+        [FromBody] RegisterUserRequest request,
+        CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var command = new RegisterUserCommand(
+           request.Email,
+           request.Password
+       );
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return Created(
+            $"users/{result.UserId}",
+            result
+        );
     }
 
     [HttpPost(nameof(Login))]

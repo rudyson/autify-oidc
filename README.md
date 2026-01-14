@@ -1,6 +1,6 @@
 # Rudyson's Autify OIDC Provider
 
-Autify is an OIDC provider for authentication with support of popular login systems.
+Autify is identity provider for authentication with support of both local and external login systems. Based on microservice architecture, it provides a robust and scalable solution for managing user identities and access control.
 - RBAC / ABAC access control.
 - JWT token:
     - Short-lived access token.

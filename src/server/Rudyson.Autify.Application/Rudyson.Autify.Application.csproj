@@ -7,13 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Mapster.Async" Version="2.0.1" />
+    <PackageReference Include="Mapster.Core" Version="1.2.1" />
+    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
+    <PackageReference Include="TypeGen" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Handlers\" />
-    <Folder Include="Commands\" />
     <Folder Include="DTO\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Rudyson.Autify.Domain\Rudyson.Autify.Domain.csproj" />
   </ItemGroup>
+
+  <Target Name="GenerateTypeScript" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+    <Message Text="Generating TypeScript models using TypeGen..." Importance="high" />
+
+    <Exec Command="dotnet typegen generate -c ../tgconfig.json" WorkingDirectory="$(ProjectDir)" />
+  </Target>
 
 </Project>
