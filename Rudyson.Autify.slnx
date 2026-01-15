@@ -8,6 +8,9 @@
     <File Path="README.md" />
     <File Path="src/server/tgconfig.json" />
   </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
   <Project Path="src/server/Rudyson.Autify.Application/Rudyson.Autify.Application.csproj" />
   <Project Path="src/server/Rudyson.Autify.Domain/Rudyson.Autify.Domain.csproj" />
   <Project Path="src/server/Rudyson.Autify.Infrastructure/Rudyson.Autify.Infrastructure.csproj" />

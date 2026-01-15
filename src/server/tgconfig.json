@@ -6,5 +6,5 @@
     "dateTimeConversion": "Date",
     "fileExtension": "ts",
     "strictNullChecks": true,
-    "addHeader": false
+    "fileHeading": false
 }
