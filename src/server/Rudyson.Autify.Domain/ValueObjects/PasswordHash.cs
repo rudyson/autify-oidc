@@ -4,9 +4,9 @@ namespace Rudyson.Autify.Domain.ValueObjects;
 
 public sealed class PasswordHash : ValueObject
 {
-    public string Value { get; }
+    public string Value { get; init; }
 
-    private PasswordHash(string value)
+    public PasswordHash(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new DomainException("Password hash is empty");

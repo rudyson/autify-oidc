@@ -2,22 +2,22 @@
 
 namespace Rudyson.Autify.Domain.ValueObjects;
 
-public sealed class RefreshToken : ValueObject
+public sealed class RefreshTokenHash : ValueObject
 {
-    public string Hash { get; }
+    public string Value { get; init; }
 
-    private RefreshToken(string hash)
+    public RefreshTokenHash(string hash)
     {
         if (string.IsNullOrWhiteSpace(hash))
             throw new DomainException("Refresh token hash is empty");
 
-        Hash = hash;
+        Value = hash;
     }
 
-    public static RefreshToken FromHash(string hash) => new(hash);
+    public static RefreshTokenHash FromHash(string hash) => new(hash);
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return Hash;
+        yield return Value;
     }
 }

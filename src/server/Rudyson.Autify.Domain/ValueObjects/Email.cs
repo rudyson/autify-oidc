@@ -4,9 +4,9 @@ namespace Rudyson.Autify.Domain.ValueObjects;
 
 public sealed class Email : ValueObject
 {
-    public string Value { get; }
+    public string Value { get; init; }
 
-    private Email(string value)
+    public Email(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new DomainException("Email is empty");

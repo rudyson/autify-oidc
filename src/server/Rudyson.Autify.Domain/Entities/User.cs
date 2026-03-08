@@ -6,8 +6,8 @@ namespace Rudyson.Autify.Domain.Entities;
 
 public sealed class User : AggregateRoot<UserId>
 {
-    public Email Email { get; private set; }
-    public PasswordHash PasswordHash { get; private set; }
+    public Email Email { get; private set; } = null!;
+    public PasswordHash PasswordHash { get; private set; }= null!;
     public UserStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -47,7 +47,7 @@ public sealed class User : AggregateRoot<UserId>
     }
 
     public Session CreateSession(
-        RefreshToken refreshToken,
+        RefreshTokenHash refreshToken,
         DateTime expiresAt)
     {
         if (Status != UserStatus.Active)

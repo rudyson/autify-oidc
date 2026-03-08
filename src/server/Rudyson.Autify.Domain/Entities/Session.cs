@@ -5,8 +5,8 @@ namespace Rudyson.Autify.Domain.Entities;
 
 public sealed class Session : AggregateRoot<SessionId>
 {
-    public UserId UserId { get; private set; }
-    public RefreshToken RefreshToken { get; private set; }
+    public UserId UserId { get; private set; } = null!;
+    public RefreshTokenHash RefreshTokenHash { get; private set; } = null!;
     public DateTime ExpiresAt { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? RevokedAt { get; private set; }
@@ -19,19 +19,19 @@ public sealed class Session : AggregateRoot<SessionId>
     private Session(
         SessionId id,
         UserId userId,
-        RefreshToken refreshToken,
+        RefreshTokenHash refreshToken,
         DateTime expiresAt)
     {
         Id = id;
         UserId = userId;
-        RefreshToken = refreshToken;
+        RefreshTokenHash = refreshToken;
         ExpiresAt = expiresAt;
         CreatedAt = DateTime.UtcNow;
     }
 
     public static Session Create(
         UserId userId,
-        RefreshToken refreshToken,
+        RefreshTokenHash refreshToken,
         DateTime expiresAt)
     {
         if (expiresAt <= DateTime.UtcNow)
@@ -53,12 +53,12 @@ public sealed class Session : AggregateRoot<SessionId>
         RevokedAt = DateTime.UtcNow;
     }
 
-    public void RotateRefreshToken(RefreshToken newToken, DateTime newExpiresAt)
+    public void RotateRefreshToken(RefreshTokenHash newToken, DateTime newExpiresAt)
     {
         if (!IsActive)
             throw new DomainException("Session is not active");
 
-        RefreshToken = newToken;
+        RefreshTokenHash = newToken;
         ExpiresAt = newExpiresAt;
     }
 }
