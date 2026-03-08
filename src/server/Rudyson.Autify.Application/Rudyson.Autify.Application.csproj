@@ -7,13 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="14.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
-    <PackageReference Include="Mapster" Version="7.4.0" />
-    <PackageReference Include="Mapster.Async" Version="2.0.1" />
-    <PackageReference Include="Mapster.Core" Version="1.2.1" />
-    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
-    <PackageReference Include="TypeGen" Version="7.0.0" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
+    <PackageReference Include="Mapster"  />
+    <PackageReference Include="Mapster.Async"  />
+    <PackageReference Include="Mapster.Core"  />
+    <PackageReference Include="Mapster.DependencyInjection"  />
+    <PackageReference Include="TypeGen" />
   </ItemGroup>
 
   <ItemGroup>
