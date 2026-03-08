@@ -1,0 +1,65 @@
+version: "3.8"
+name: "autify"
+
+services:
+  master_database:
+    image: postgres:18.1-alpine
+    restart: always
+    secrets:
+      - db_password
+    env_file:
+      - "./env/.db.env"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "5432:5432"
+    volumes:
+      - master_database_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    env_file:
+      - "./env/.pgadmin4.env"
+    ports:
+      - "9000:80"
+    depends_on:
+      master_database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://localhost:80/misc/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+  server:
+    image: ${DOCKER_REGISTRY-}rudysonautifyserver
+    build:
+      context: .
+      dockerfile: src/server/Rudyson.Autify.Server/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+secrets:
+  db_password:
+    file: ./secrets/master-database.secret
+
+volumes:
+  master_database_data:
+  pgadmin_data:

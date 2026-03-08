@@ -1,0 +1,10 @@
+﻿{
+    "outputPath": "../../client/src/shared/api-types",
+    "enumStyle": "StringUnion",
+    "clearOutputPath": true,
+    "generateHybridExport": true,
+    "dateTimeConversion": "Date",
+    "fileExtension": "ts",
+    "strictNullChecks": true,
+    "fileHeading": false
+}
