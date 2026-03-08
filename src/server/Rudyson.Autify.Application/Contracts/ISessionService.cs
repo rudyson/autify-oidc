@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Rudyson.Autify.Application.Contracts;
+﻿namespace Rudyson.Autify.Application.Contracts;
 
 public interface ISessionService
 {

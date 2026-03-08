@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Rudyson.Autify.Infrastructure.Options;
+﻿namespace Rudyson.Autify.Infrastructure.Options;
 
 public class JwtOptions
 {

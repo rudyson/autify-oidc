@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Rudyson.Autify.Application.Commands.Register;
-using Rudyson.Autify.Application.Contracts;
 
 namespace Rudyson.Autify.Server.Controllers;
 

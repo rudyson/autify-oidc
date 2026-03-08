@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rudyson.Autify.Application.Contracts;
-using Rudyson.Autify.Domain.Repositories;
-using Rudyson.Autify.Domain.Repositories.Inherit;
 using Rudyson.Autify.Infrastructure.Options;
 using Rudyson.Autify.Infrastructure.Persistence;
 using Rudyson.Autify.Infrastructure.Services;
@@ -32,9 +28,44 @@ public static class DependencyInjection
         //        .UseSnakeCaseNamingConvention());
 
         services.AddDbContext<ApplicationDbContext>(options =>
+        {
             options
-                .UseNpgsql(connectionStringIdentityDatabase)
-                .UseSnakeCaseNamingConvention());
+               .UseNpgsql(connectionStringIdentityDatabase)
+               .UseSnakeCaseNamingConvention();
+            options.UseOpenIddict();
+        });
+
+        services.AddIdentity<IdentityUser, IdentityRole>()
+           .AddEntityFrameworkStores<ApplicationDbContext>()
+           .AddDefaultTokenProviders();
+
+        // Cionfigure OpenIddict
+        services.AddOpenIddict()
+             .AddCore(coreOptions =>
+             {
+                 coreOptions.UseEntityFrameworkCore()
+                   .UseDbContext<ApplicationDbContext>();
+             })
+             .AddServer(options =>
+             {
+                 options.AllowClientCredentialsFlow().AllowRefreshTokenFlow();
+                 options.AllowPasswordFlow().AllowRefreshTokenFlow();
+
+                 // Encryption and signing of tokens
+                 options
+                    .AddDevelopmentEncryptionCertificate()
+                    .AddDevelopmentSigningCertificate()
+                    .DisableAccessTokenEncryption();
+
+                 // Register the ASP.NET Core host and configure the ASP.NET Core options.
+                 options.UseAspNetCore()
+                    .EnableTokenEndpointPassthrough()
+                    .EnableAuthorizationEndpointPassthrough()
+                    // TODO: Find alternative or remove
+                    //.EnableLogoutEndpointPassthrough()
+                    .DisableTransportSecurityRequirement();
+
+             });
 
         //services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AutifyContext>());
 

@@ -18,5 +18,5 @@ public class UserRepository : EfRepository<User, UserId>, IUserRepository
     {
         return _context.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
-        
+
 }

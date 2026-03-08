@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Rudyson.Autify.Domain.Repositories;
+﻿using Rudyson.Autify.Domain.Repositories;
 using Rudyson.Autify.Domain.Repositories.Inherit;
 using Rudyson.Autify.Domain.ValueObjects;
 

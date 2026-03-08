@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Rudyson.Autify.Application.Contracts;
-using Rudyson.Autify.Domain.Entities;
+﻿using Rudyson.Autify.Application.Contracts;
 using Rudyson.Autify.Domain.ValueObjects;
 
 namespace Rudyson.Autify.Infrastructure.Services;

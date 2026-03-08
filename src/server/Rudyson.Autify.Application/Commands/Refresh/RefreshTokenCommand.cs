@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+﻿using MediatR;
 using Rudyson.Autify.Application.Contracts;
 using Rudyson.Autify.Domain.Repositories.Inherit;
-using TypeGen.Core.TypeAnnotations;
 
 namespace Rudyson.Autify.Application.Commands.Refresh;
 

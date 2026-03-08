@@ -34,8 +34,8 @@ public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, 
         var user = await _users.GetByEmailAsync(email, cancellationToken)
             ?? throw new ApplicationException("Invalid credentials");
 
-        
-         if (!_passwordHasher.Verify(request.Password, user.PasswordHash))
+
+        if (!_passwordHasher.Verify(request.Password, user.PasswordHash))
             throw new ApplicationException("Invalid credentials");
 
         var (rawRefreshToken, hashedToken) = _tokenService.CreateRefreshToken();

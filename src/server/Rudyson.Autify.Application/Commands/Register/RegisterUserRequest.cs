@@ -1,6 +1,4 @@
-﻿using TypeGen.Core.TypeAnnotations;
-
-namespace Rudyson.Autify.Application.Commands.Register;
+﻿namespace Rudyson.Autify.Application.Commands.Register;
 
 // TODO: Fix bug with building
 //[ExportTsInterface]

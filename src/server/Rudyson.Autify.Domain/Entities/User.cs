@@ -7,7 +7,7 @@ namespace Rudyson.Autify.Domain.Entities;
 public sealed class User : AggregateRoot<UserId>
 {
     public Email Email { get; private set; } = null!;
-    public PasswordHash PasswordHash { get; private set; }= null!;
+    public PasswordHash PasswordHash { get; private set; } = null!;
     public UserStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
 

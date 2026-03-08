@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Rudyson.Autify.Domain.Core;
+﻿namespace Rudyson.Autify.Domain.Core;
 
 public abstract class AggregateRoot<TId> : IAggregateRoot
 {

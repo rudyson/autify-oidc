@@ -1,13 +1,13 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
-using Rudyson.Autify.Infrastructure;
-using Rudyson.Autify.Infrastructure.Options;
-using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Rudyson.Autify.Server.Helpers;
 using Rudyson.Autify.Application.Contracts;
+using Rudyson.Autify.Infrastructure;
+using Rudyson.Autify.Infrastructure.Options;
+using Rudyson.Autify.Server.Helpers;
+using Scalar.AspNetCore;
 
 namespace Rudyson.Autify.Server;
 
