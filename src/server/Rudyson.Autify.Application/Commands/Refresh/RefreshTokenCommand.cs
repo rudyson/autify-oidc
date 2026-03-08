@@ -12,7 +12,8 @@ public record RefreshTokenCommand(string RefreshToken) : IRequest<RefreshTokenRe
 
 public record RefreshTokenResult(string AccessToken);
 
-[ExportTsInterface]
+// TODO: Fix bug with building
+//[ExportTsInterface]
 public record RefreshTokenRequest(string RefreshToken);
 
 public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, RefreshTokenResult>

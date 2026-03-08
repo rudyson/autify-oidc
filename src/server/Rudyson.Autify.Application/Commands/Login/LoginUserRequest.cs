@@ -2,5 +2,6 @@
 
 namespace Rudyson.Autify.Application.Commands.Login;
 
-[ExportTsInterface]
+// TODO: Fix bug with building
+//[ExportTsInterface]
 public record LoginUserRequest(string Email, string Password);

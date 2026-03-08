@@ -19,17 +19,27 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString(ApplicationConnectionStrings.MasterDatabase);
+        // TODO: Remove later primary context
+        //var connectionStringMasterDatabase = configuration.GetConnectionString(ApplicationConnectionStrings.MasterDatabase);
+        //ArgumentNullException.ThrowIfNullOrWhiteSpace(connectionStringMasterDatabase);
 
-        services.AddDbContext<AutifyContext>(options =>
+        var connectionStringIdentityDatabase = configuration.GetConnectionString(ApplicationConnectionStrings.IdentityDatabase);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(connectionStringIdentityDatabase);
+
+        //services.AddDbContext<AutifyContext>(options =>
+        //    options
+        //        .UseNpgsql(connectionStringMasterDatabase)
+        //        .UseSnakeCaseNamingConvention());
+
+        services.AddDbContext<ApplicationDbContext>(options =>
             options
-                .UseNpgsql(connectionString)
+                .UseNpgsql(connectionStringIdentityDatabase)
                 .UseSnakeCaseNamingConvention());
 
-        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AutifyContext>());
+        //services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AutifyContext>());
 
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<ISessionRepository, SessionRepository>();
+        //services.AddScoped<IUserRepository, UserRepository>();
+        //services.AddScoped<ISessionRepository, SessionRepository>();
 
         services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 
