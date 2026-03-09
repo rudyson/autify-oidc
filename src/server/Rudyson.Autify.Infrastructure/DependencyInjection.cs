@@ -48,6 +48,12 @@ public static class DependencyInjection
              })
              .AddServer(options =>
              {
+                 options.SetTokenEndpointUris("connect/token");
+                 options.SetAuthorizationEndpointUris("/connect/authorize");
+                 options.SetUserInfoEndpointUris("/connect/userinfo");
+
+                 options.AllowAuthorizationCodeFlow();
+
                  options.AllowClientCredentialsFlow().AllowRefreshTokenFlow();
                  options.AllowPasswordFlow().AllowRefreshTokenFlow();
 
@@ -63,6 +69,7 @@ public static class DependencyInjection
                     .EnableAuthorizationEndpointPassthrough()
                     // TODO: Find alternative or remove
                     //.EnableLogoutEndpointPassthrough()
+                    .EnableUserInfoEndpointPassthrough()
                     .DisableTransportSecurityRequirement();
 
              });

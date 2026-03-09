@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Rudyson.Autify.Application.Contracts;
 using Rudyson.Autify.Infrastructure;
@@ -84,9 +85,14 @@ public class Startup(IConfiguration configuration, IHostEnvironment hostEnvironm
 
     public void Configure(IApplicationBuilder app)
     {
+        app.UseDeveloperExceptionPage();
+        app.UseForwardedHeaders();
+
         app.UseRouting();
         app.UseHttpsRedirection();
+        app.UseCors();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
@@ -100,6 +106,7 @@ public class Startup(IConfiguration configuration, IHostEnvironment hostEnvironm
                 });
             }
             endpoints.MapControllers();
+            endpoints.MapDefaultControllerRoute();
         });
     }
 }
