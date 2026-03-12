@@ -4,8 +4,8 @@ using Rudyson.Autify.Application.Commands.Register;
 
 namespace Rudyson.Autify.Server.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
+//[ApiController]
+//[Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;

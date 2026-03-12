@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Abstractions;
 using Rudyson.Autify.Application.Contracts;
 using Rudyson.Autify.Infrastructure;
 using Rudyson.Autify.Infrastructure.Options;
@@ -85,6 +86,8 @@ public class Startup(IConfiguration configuration, IHostEnvironment hostEnvironm
 
     public void Configure(IApplicationBuilder app)
     {
+        SeedTestClientAsync(app).GetAwaiter().GetResult();
+
         app.UseDeveloperExceptionPage();
         app.UseForwardedHeaders();
 
@@ -108,5 +111,47 @@ public class Startup(IConfiguration configuration, IHostEnvironment hostEnvironm
             endpoints.MapControllers();
             endpoints.MapDefaultControllerRoute();
         });
+    }
+
+    private static async Task SeedTestClientAsync(IApplicationBuilder app, CancellationToken cancellationToken = default)
+    {
+        // TODO: Move to application configuration
+        var testClientOptions = new
+        {
+            ClientId = "web-client",
+            ClientSecret = "secret",
+            RedirectUri = "https://localhost:5002/signin-oidc"
+        };
+        using var scope = app.ApplicationServices.CreateScope();
+
+        var manager = scope.ServiceProvider
+            .GetRequiredService<IOpenIddictApplicationManager>();
+
+        if (await manager.FindByClientIdAsync(testClientOptions.ClientId, cancellationToken) == null)
+        {
+            await manager.CreateAsync(new OpenIddictApplicationDescriptor
+            {
+                ClientId = testClientOptions.ClientId,
+                ClientSecret = testClientOptions.ClientSecret,
+
+                Permissions =
+            {
+                OpenIddictConstants.Permissions.Endpoints.Authorization,
+                OpenIddictConstants.Permissions.Endpoints.Token,
+
+                OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+                OpenIddictConstants.Permissions.ResponseTypes.Code,
+
+                //OpenIddictConstants.Permissions.Scopes.OpenId,
+                OpenIddictConstants.Permissions.Scopes.Email,
+                OpenIddictConstants.Permissions.Scopes.Profile
+            },
+
+                RedirectUris =
+            {
+                new Uri(testClientOptions.RedirectUri)
+            }
+            }, cancellationToken);
+        }
     }
 }

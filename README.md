@@ -16,7 +16,33 @@ Use this system in your project to enable OpenID Connect (OIDC) authentication w
 
 ### Authentication flow
 
+```
+Client
+   ↓
+GET /connect/authorize
+   ↓
+Login Page (Identity)
+   ↓
+SignInManager.PasswordSignInAsync
+   ↓
+Authentication Cookie
+   ↓
+User.Identity.IsAuthenticated = true
+   ↓
+/connect/authorize
+   ↓
+OpenIddict Authorization code
+   ↓
+POST /connect/token
+   ↓
+access_token + id_token
 
+
+Result:
+POST /connect/token
+grant_type=authorization_code
+code=xxxxx
+```
 
 ### Accounts
 

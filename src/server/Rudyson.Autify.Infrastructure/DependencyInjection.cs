@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenIddict.Abstractions;
 using Rudyson.Autify.Application.Contracts;
 using Rudyson.Autify.Infrastructure.Options;
 using Rudyson.Autify.Infrastructure.Persistence;
@@ -48,12 +49,11 @@ public static class DependencyInjection
              })
              .AddServer(options =>
              {
-                 options.SetTokenEndpointUris("connect/token");
+                 options.SetTokenEndpointUris("/connect/token");
                  options.SetAuthorizationEndpointUris("/connect/authorize");
                  options.SetUserInfoEndpointUris("/connect/userinfo");
 
                  options.AllowAuthorizationCodeFlow();
-
                  options.AllowClientCredentialsFlow().AllowRefreshTokenFlow();
                  options.AllowPasswordFlow().AllowRefreshTokenFlow();
 

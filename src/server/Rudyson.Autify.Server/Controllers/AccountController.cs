@@ -8,23 +8,26 @@ namespace Rudyson.Autify.Server.Controllers;
 // TODO: Move business logic to a service and inject it into the controller. This will make the code more testable and maintainable.
 [Route("api/[controller]")]
 [ApiController]
-public class RegistrationController : ControllerBase
+public class AccountController : ControllerBase
 {
+    private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly ApplicationDbContext _applicationDbContext;
     private static bool _databaseChecked;
 
-    public RegistrationController(
+    public AccountController(
+          SignInManager<IdentityUser> signInManager,
           UserManager<IdentityUser> userManager,
           ApplicationDbContext applicationDbContext)
     {
+        _signInManager = signInManager;
         _userManager = userManager;
         _applicationDbContext = applicationDbContext;
     }
 
     //
     // POST: /Account/Register
-    [HttpPost]
+    [HttpPost("register")]
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
     {
@@ -48,6 +51,30 @@ public class RegistrationController : ControllerBase
 
         // If we got this far, something failed.
         return BadRequest(ModelState);
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginModel model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+
+        if (user == null)
+            return Unauthorized();
+
+        if (!await _userManager.CheckPasswordAsync(user, model.Password))
+            return Unauthorized();
+
+        await _signInManager.SignInAsync(user, model.RememberMe);
+
+        return Ok();
+    }
+
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return Ok();
     }
 
     #region Helpers

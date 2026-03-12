@@ -1,19 +1,23 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
+using Rudyson.Autify.Infrastructure.Persistence;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Rudyson.Autify.Server.Controllers;
 
 [ApiController]
-public class AuthorizationController : Controller
+public class ConnectController : Controller
 {
     private readonly IOpenIddictApplicationManager _applicationManager;
 
-    public AuthorizationController(IOpenIddictApplicationManager applicationManager)
+    public ConnectController(IOpenIddictApplicationManager applicationManager)
         => _applicationManager = applicationManager;
 
     [HttpPost("~/connect/token"), Produces("application/json")]
@@ -21,6 +25,18 @@ public class AuthorizationController : Controller
     {
         var request = HttpContext.GetOpenIddictServerRequest();
         ArgumentNullException.ThrowIfNull(request, nameof(request));
+
+        if (request.IsAuthorizationCodeGrantType())
+        {
+            var result = await HttpContext.AuthenticateAsync(
+                OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+
+            var principal = result.Principal!;
+
+            return SignIn(principal,
+                OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+        }
+
         if (request.IsClientCredentialsGrantType())
         {
             // Note: the client credentials are automatically validated by OpenIddict:
@@ -52,5 +68,47 @@ public class AuthorizationController : Controller
         }
 
         throw new NotImplementedException("The specified grant is not implemented.");
+    }
+
+    [HttpGet("~/connect/authorize")]
+    public IActionResult Authorize()
+    {
+        if (!User.Identity!.IsAuthenticated)
+        {
+            return Challenge(IdentityConstants.ApplicationScheme);
+        }
+
+        var identity = new ClaimsIdentity(
+            OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+
+        identity.AddClaim(OpenIddictConstants.Claims.Subject,
+            User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        identity.AddClaim(OpenIddictConstants.Claims.Email,
+            User.FindFirstValue(ClaimTypes.Email)!);
+
+        var principal = new ClaimsPrincipal(identity);
+
+        principal.SetScopes(new[]
+        {
+        OpenIddictConstants.Scopes.OpenId,
+        OpenIddictConstants.Scopes.Email,
+        OpenIddictConstants.Scopes.Profile
+    });
+
+        return SignIn(principal,
+            OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+    }
+
+    [Authorize]
+    [HttpGet("~/connect/userinfo")]
+    public IActionResult UserInfo()
+    {
+        return Ok(new
+        {
+            sub = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            email = User.FindFirstValue(ClaimTypes.Email),
+            name = User.Identity!.Name
+        });
     }
 }
